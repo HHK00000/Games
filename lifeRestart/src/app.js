@@ -1,7 +1,32 @@
 import { summary } from './functions/summary.js';
 import { getRate, getGrade } from './functions/addition.js';
 import Life from './life.js';
-
+console.log(location.search)
+function max (){
+    let search = location.search;
+    let max = 20;
+    let other = ''
+    if(search === ''){
+        return max;
+    }
+    search = search.substring(1);
+    search =  search.split('&');
+    search.map(item => {
+        let info = item.split('=');
+        if(info[0] === 'max'){
+            max = parseInt(info[1]) || 20;
+        }
+        if(info[1] === 'other'){
+            other = parseInt(info[1]);
+        }
+    })
+    if(max <= 0){
+        max = 0;
+    } else if (max > 40){
+        max = 40;
+    }
+    return max;
+}
 class App{
     constructor(){
         this.#life = new Life();
@@ -11,7 +36,7 @@ class App{
     #pages;
     #currentPage;
     #talentSelected = new Set();
-    #totalMax=20;
+    #totalMax=max();
     #isEnd = false;
     #selectedExtendTalent = null;
     #hintTimeout;
@@ -255,7 +280,8 @@ class App{
                     return;
                 }
                 talentPage.find('#next').hide()
-                this.#totalMax = 20 + this.#life.getTalentAllocationAddition(Array.from(this.#talentSelected).map(({id})=>id));
+                console.log(123)
+                this.#totalMax = max() + this.#life.getTalentAllocationAddition(Array.from(this.#talentSelected).map(({id})=>id));
                 this.switch('property');
             })
 
@@ -537,7 +563,8 @@ class App{
                 this.#life.talentExtend(this.#selectedExtendTalent);
                 this.#selectedExtendTalent = null;
                 this.#talentSelected.clear();
-                this.#totalMax = 20;
+                this.#totalMax = max();
+                console.log(1234)
                 this.#isEnd = false;
                 this.switch('index');
             });
@@ -667,7 +694,7 @@ class App{
                     this.#currentPage = 'talent';
                     talentPage.find('ul.selectlist').empty();
                     talentPage.find('#random').show();
-                    this.#totalMax = 20;
+                    this.#totalMax = max();
                 },
             },
             property: {
